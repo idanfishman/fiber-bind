@@ -34,7 +34,7 @@ func main() {
         Validator: validator.New(),
         Source:    validation.Body,
     }, &Person{}), func(c *fiber.Ctx) error {
-        person := c.Locals(validation.Body).(Person)
+        person := c.Locals(validation.Body).(*Person)
         return c.JSON(person)
     })
 
