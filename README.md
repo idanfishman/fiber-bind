@@ -33,7 +33,7 @@ func main() {
     app.Post("/person", validation.New(validation.Config{
         Validator: validator.New(),
         Source:    validation.Body,
-    }, Person{}), func(c *fiber.Ctx) error {
+    }, &Person{}), func(c *fiber.Ctx) error {
         person := c.Locals(validation.Body).(Person)
         return c.JSON(person)
     })
