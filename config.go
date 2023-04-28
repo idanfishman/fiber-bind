@@ -6,15 +6,13 @@ import (
 )
 
 // ValidationSource indicates the source of the data to validate.
-type ValidationSource string
-
 const (
 	// Body indicates that the data to validate is in the request body.
-	Body ValidationSource = "body"
+	Body = "body"
 	// Query indicates that the data to validate is in the query string.
-	Query ValidationSource = "query"
+	Query = "query"
 	// Params indicates that the data to validate is in the route parameters.
-	Params ValidationSource = "params"
+	Params = "params"
 )
 
 // Config defines the config for middleware.
@@ -32,7 +30,7 @@ type Config struct {
 	// Source defines the source of the data to validate.
 	//
 	// Required. Default: body
-	Source ValidationSource
+	Source string
 }
 
 // ConfigDefault is the default config
