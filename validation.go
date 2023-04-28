@@ -48,7 +48,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 			})
 		}
 
-		c.Locals(cfg.Source.String(), data)
+		c.Locals(cfg.Source, data)
 
 		return c.Next()
 	}
