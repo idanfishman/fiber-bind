@@ -1,5 +1,7 @@
 # Validation Middleware for Fiber
 
+[![Mentioned in Awesome Fiber](https://awesome.re/mentioned-badge.svg)](https://github.com/gofiber/awesome-fiber) 
+
 The validation middleware is a middleware for [Fiber](https://github.com/gofiber/fiber) web framework that provides a convenient way to parse and validate data from different sources such as the request body, query string parameters, and route parameters.
 
 ### Installation
