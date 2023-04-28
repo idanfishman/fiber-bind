@@ -2,7 +2,6 @@ package validation_test
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,9 +13,9 @@ import (
 )
 
 type User struct {
-	Name  string `json:"name" validate:"required"`
-	Email string `json:"email" validate:"required,email"`
-	Age   int    `json:"age" validate:"gte=0,lte=130"`
+	Name  string `query:"name" params:"name" json:"name" validate:"required"`
+	Email string `query:"email" params:"email" json:"email" validate:"required,email"`
+	Age   int    `query:"age" params:"age" json:"age" validate:"gte=0,lte=130"`
 }
 
 func TestValidationMiddleware(t *testing.T) {
@@ -34,8 +33,6 @@ func TestValidationMiddleware(t *testing.T) {
 
 	// Define a POST endpoint for testing
 	app.Post("/user", func(c *fiber.Ctx) error {
-		fmt.Println(c.Locals(validation.Body))
-		fmt.Println(c.Locals("body"))
 		user := c.Locals(validation.Body).(*User)
 		return c.JSON(user)
 	})
