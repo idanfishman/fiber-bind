@@ -8,6 +8,10 @@ import (
 // ValidationSource indicates the source of the data to validate.
 type ValidationSource string
 
+func (vs ValidationSource) String() string {
+	return string(vs)
+}
+
 const (
 	// Body indicates that the data to validate is in the request body.
 	Body ValidationSource = "body"
