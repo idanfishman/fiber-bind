@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/gofiber/fiber/v2"
@@ -45,6 +46,8 @@ func New(config Config, schema interface{}) fiber.Handler {
 				"error": err.Error(),
 			})
 		}
+
+		fmt.Println(data)
 
 		c.Locals(cfg.Source, data)
 
