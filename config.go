@@ -13,6 +13,8 @@ const (
 	Query = "query"
 	// Params indicates that the data to validate is in the route parameters.
 	Params = "params"
+	// Form indicates that the data to validate is in the form.
+	Form = "form"
 )
 
 // Config defines the config for middleware.

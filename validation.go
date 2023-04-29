@@ -26,8 +26,8 @@ func New(config Config, schema interface{}) fiber.Handler {
 		var data interface{}
 		var err error
 		switch cfg.Source {
-		case Body:
-			// Parse request body as JSON and store it in the data variable
+		case Body, Form:
+			// Parse request body and store it in the data variable
 			data = reflect.New(reflect.TypeOf(schema).Elem()).Interface()
 			err = c.BodyParser(data)
 		case Query:
@@ -87,6 +87,7 @@ func mapValidationErrors(err error, source string, schema interface{}) fiber.Map
 // sourceTags maps data sources (body, query, and params) to validation tags (json, query, and params)
 var sourceTags = map[string]string{
 	"body":   "json",
-	"query":  "query",
+	"form":   "form",
 	"params": "params",
+	"query":  "query",
 }
