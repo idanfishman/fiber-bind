@@ -52,7 +52,7 @@ The middleware can be configured using the `Config` struct, which has the follow
 
 - `Next` - A function that is called before the middleware is executed. If this function returns `true`, the middleware is skipped.
 - `Validator` - A validator instance to use for validating the data. By default, the middleware uses the [go-playground/validator/v10](https://github.com/go-playground/validator/v10) package.
-- `Source` - The source of the data to validate. This can be one of `validation.Body`, `validation.Query`, or `validation.Params`.
+- `Source` - The source of the data to validate. This can be one of `validation.Body`, `validation.Form` ,`validation.Query`, or `validation.Params`.
 
 ## License
 
