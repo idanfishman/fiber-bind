@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.0.0"
+const Version = "1.3.0"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -26,7 +27,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 		var data interface{}
 		var err error
 		switch cfg.Source {
-		case Body, Form:
+		case Body:
 			// Parse request body and store it in the data variable
 			data = reflect.New(reflect.TypeOf(schema).Elem()).Interface()
 			err = c.BodyParser(data)
@@ -40,14 +41,33 @@ func New(config Config, schema interface{}) fiber.Handler {
 			err = c.ParamsParser(data)
 		default:
 			// Return an internal server error if the source is not recognized
-			return fiber.ErrInternalServerError
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": fmt.Sprintf("Unrecognized data source: %s", cfg.Source),
+			})
 		}
 
 		// Return a bad request error if the data could not be parsed
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 				"error": err.Error(),
 			})
+		}
+
+		// Extract form files from the request body and add them to the data variable
+		if cfg.Source == Body && cfg.FormFileFields != nil {
+			// Get the multipart form from the request body
+			form, err := c.MultipartForm()
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": fmt.Sprintf("Failed to parse multipart form: %s", err.Error()),
+				})
+			}
+			// Iterate over each form file field
+			for _, field := range cfg.FormFileFields {
+				if file, ok := form.File[field]; ok {
+					data.(map[string]interface{})[field] = file
+				}
+			}
 		}
 
 		// Validate the data using the configured validator instance and the provided schema
@@ -86,8 +106,7 @@ func mapValidationErrors(err error, source string, schema interface{}) fiber.Map
 
 // sourceTags maps data sources (body, query, and params) to validation tags (json, query, and params)
 var sourceTags = map[string]string{
-	"body":   "json",
-	"form":   "form",
-	"params": "params",
 	"query":  "query",
+	"body":   "form",
+	"params": "params",
 }

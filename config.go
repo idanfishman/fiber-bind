@@ -13,8 +13,6 @@ const (
 	Query = "query"
 	// Params indicates that the data to validate is in the route parameters.
 	Params = "params"
-	// Form indicates that the data to validate is in the form.
-	Form = "form"
 )
 
 // Config defines the config for middleware.
@@ -33,13 +31,18 @@ type Config struct {
 	//
 	// Required. Default: body
 	Source string
+	// FormFiles defines the form files to validate.
+	//
+	// Optional. Default: nil
+	FormFileFields []string
 }
 
 // ConfigDefault is the default config
 var ConfigDefault = Config{
-	Next:      nil,
-	Validator: validator.New(),
-	Source:    Body,
+	Next:           nil,
+	Validator:      validator.New(),
+	Source:         Body,
+	FormFileFields: nil,
 }
 
 // Helper function to set default values
@@ -64,5 +67,10 @@ func configDefault(config ...Config) Config {
 	if cfg.Source == "" {
 		cfg.Source = ConfigDefault.Source
 	}
+
+	if cfg.FormFileFields == nil {
+		cfg.FormFileFields = ConfigDefault.FormFileFields
+	}
+
 	return cfg
 }
