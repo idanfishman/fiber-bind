@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.0-alpha.6"
+const Version = "1.2.0"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
