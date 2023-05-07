@@ -31,10 +31,12 @@ type Config struct {
 	//
 	// Required. Default: body
 	Source string
-	// FormFiles defines the form files to validate.
+	// FormFiles defines the form files fields of the data to validate.
+	// The key is the name of the struct field and the value is the name of the
+	// file to upload.
 	//
 	// Optional. Default: nil
-	FormFileFields []string
+	FormFileFields map[string]string
 }
 
 // ConfigDefault is the default config

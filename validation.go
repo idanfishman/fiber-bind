@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.0-alpha.5"
+const Version = "1.2.0-alpha.6"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -66,13 +66,10 @@ func New(config Config, schema interface{}) fiber.Handler {
 			// Iterate over each form file field and add the files to the data variable
 			dataValue := reflect.ValueOf(data).Elem()
 
-			for _, field := range cfg.FormFileFields {
-				formfiles, ok := form.File[field]
-				fmt.Println(formfiles)
-				fmt.Println(field)
+			for field, file := range cfg.FormFileFields {
+				formfiles, ok := form.File[file]
 				if ok {
 					structField := dataValue.FieldByName(field)
-					fmt.Println(structField)
 					// Check if the field is a slice or a pointer
 					switch structField.Kind() {
 					case reflect.Ptr:
