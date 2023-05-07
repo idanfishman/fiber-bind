@@ -2,7 +2,6 @@ package validation
 
 import (
 	"fmt"
-	"mime/multipart"
 	"reflect"
 	"strings"
 
@@ -10,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.0-alpha.4"
+const Version = "1.2.0-alpha.5"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -69,9 +68,11 @@ func New(config Config, schema interface{}) fiber.Handler {
 
 			for _, field := range cfg.FormFileFields {
 				formfiles, ok := form.File[field]
+				fmt.Println(formfiles)
+				fmt.Println(field)
 				if ok {
 					structField := dataValue.FieldByName(field)
-
+					fmt.Println(structField)
 					// Check if the field is a slice or a pointer
 					switch structField.Kind() {
 					case reflect.Ptr:
@@ -79,9 +80,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 							structField.Set(reflect.ValueOf(formfiles[0]))
 						}
 					case reflect.Slice:
-						files := make([]*multipart.FileHeader, len(formfiles))
-						copy(files, formfiles)
-						structField.Set(reflect.ValueOf(files))
+						structField.Set(reflect.ValueOf(formfiles))
 					default:
 						return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 							"error": fmt.Sprintf("Unsupported field type for %s: %s", field, structField.Kind()),
