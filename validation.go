@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.0-alpha.2"
+const Version = "1.2.0-alpha.3"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -63,12 +63,26 @@ func New(config Config, schema interface{}) fiber.Handler {
 				})
 			}
 
-			// Iterate over each form file field and add it to the data variable
+			// Iterate over each form file field and add the files to the data variable
 			dataValue := reflect.ValueOf(data).Elem()
+
 			for _, field := range cfg.FormFileFields {
-				if file, ok := form.File[field]; ok {
-					// Set the form file field value to the data variable
-					dataValue.FieldByName(field).Set(reflect.ValueOf(file))
+				formfiles, ok := form.File[field]
+				if ok {
+					structField := dataValue.FieldByName(field)
+					// Check if the field is a slice or a pointer
+					switch structField.Kind() {
+					case reflect.Ptr:
+						if len(formfiles) > 0 {
+							structField.Set(reflect.ValueOf(formfiles[0]))
+						}
+					case reflect.Slice:
+						structField.Set(reflect.ValueOf(formfiles))
+					default:
+						return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+							"error": fmt.Sprintf("Unsupported field type for %s: %s", field, structField.Kind()),
+						})
+					}
 				}
 			}
 		}
