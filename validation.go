@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.3.0"
+const Version = "1.2.0-alpha.1"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -62,10 +62,15 @@ func New(config Config, schema interface{}) fiber.Handler {
 					"error": fmt.Sprintf("Failed to parse multipart form: %s", err.Error()),
 				})
 			}
-			// Iterate over each form file field
+
+			// Iterate over each form file field and add it to the data variable
+			dataValue := reflect.ValueOf(data).Elem()
 			for _, field := range cfg.FormFileFields {
 				if file, ok := form.File[field]; ok {
-					data.(map[string]interface{})[field] = file
+					fieldValue := dataValue.FieldByName(field)
+					if fieldValue.IsValid() && fieldValue.CanSet() {
+						fieldValue.Set(reflect.ValueOf(file))
+					}
 				}
 			}
 		}
