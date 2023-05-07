@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.0-alpha.1"
+const Version = "1.2.0-alpha.2"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -67,10 +67,8 @@ func New(config Config, schema interface{}) fiber.Handler {
 			dataValue := reflect.ValueOf(data).Elem()
 			for _, field := range cfg.FormFileFields {
 				if file, ok := form.File[field]; ok {
-					fieldValue := dataValue.FieldByName(field)
-					if fieldValue.IsValid() && fieldValue.CanSet() {
-						fieldValue.Set(reflect.ValueOf(file))
-					}
+					// Set the form file field value to the data variable
+					dataValue.FieldByName(field).Set(reflect.ValueOf(file))
 				}
 			}
 		}
