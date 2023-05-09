@@ -62,9 +62,9 @@ func configDefault(config ...Config) Config {
 		cfg.Next = ConfigDefault.Next
 	}
 
-	// if cfg.Validator == nil {
-	// 	cfg.Validator = ConfigDefault.Validator
-	// }
+	if cfg.Validator == nil {
+		cfg.Validator = ConfigDefault.Validator
+	}
 
 	if cfg.Source == "" {
 		cfg.Source = ConfigDefault.Source
