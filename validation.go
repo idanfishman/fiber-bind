@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.0"
+const Version = "1.2.1"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -24,20 +24,17 @@ func New(config Config, schema interface{}) fiber.Handler {
 		}
 
 		// Parse incoming data based on the configured source
-		var data interface{}
+		data := reflect.New(reflect.TypeOf(schema).Elem()).Interface()
 		var err error
 		switch cfg.Source {
 		case Body:
 			// Parse request body and store it in the data variable
-			data = reflect.New(reflect.TypeOf(schema).Elem()).Interface()
 			err = c.BodyParser(data)
 		case Query:
 			// Parse query string parameters and store them in the data variable
-			data = reflect.New(reflect.TypeOf(schema).Elem()).Interface()
 			err = c.QueryParser(data)
 		case Params:
 			// Parse route parameters and store them in the data variable
-			data = reflect.New(reflect.TypeOf(schema).Elem()).Interface()
 			err = c.ParamsParser(data)
 		default:
 			// Return an internal server error if the source is not recognized
@@ -46,7 +43,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 			})
 		}
 
-		// Return a bad request error if the data could not be parsed
+		// Return a unprocessable entity error if the data could not be parsed
 		if err != nil {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 				"error": err.Error(),
@@ -79,7 +76,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 					case reflect.Slice:
 						structField.Set(reflect.ValueOf(formfiles))
 					default:
-						return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+						return c.Status(fiber.StatusUnsupportedMediaType).JSON(fiber.Map{
 							"error": fmt.Sprintf("Unsupported field type for %s: %s", field, structField.Kind()),
 						})
 					}
@@ -92,7 +89,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 			// Map validation errors to a response object
 			response := mapValidationErrors(err, cfg.Source, schema)
 			// Return a bad request error with the validation errors
-			return c.Status(fiber.StatusBadRequest).JSON(response)
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(response)
 		}
 
 		// Add the validated data to the context locals
