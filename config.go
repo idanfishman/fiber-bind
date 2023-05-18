@@ -7,8 +7,15 @@ import (
 
 // ValidationSource indicates the source of the data to validate.
 const (
-	// Body indicates that the data to validate is in the request body.
-	Body = "body"
+	// Form indicates that the data to validate is in the request body,
+	// and the content-type is `multipart/form-data` or `application/x-www-form-urlencoded`.
+	Form = "form"
+	// JSON indicates that the data to validate is in the request body,
+	// and the content-type is `application/json`.
+	JSON = "json"
+	// XML indicates that the data to validate is in the request body,
+	// and the content-type is `application/xml` or `text/xml`.
+	XML = "xml"
 	// Query indicates that the data to validate is in the query string.
 	Query = "query"
 	// Params indicates that the data to validate is in the route parameters.
@@ -29,7 +36,7 @@ type Config struct {
 	Validator *validator.Validate
 	// Source defines the source of the data to validate.
 	//
-	// Required. Default: body
+	// Required. Default: JSON
 	Source string
 	// FormFiles defines the form files fields of the data to validate.
 	// The key is the name of the struct field and the value is the name of the
@@ -43,7 +50,7 @@ type Config struct {
 var ConfigDefault = Config{
 	Next:           nil,
 	Validator:      validator.New(),
-	Source:         Body,
+	Source:         JSON,
 	FormFileFields: nil,
 }
 

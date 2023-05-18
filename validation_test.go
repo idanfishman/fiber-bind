@@ -28,12 +28,12 @@ func TestValidationMiddleware(t *testing.T) {
 	// Apply the validation middleware
 	app.Use(validation.New(validation.Config{
 		Validator: v,
-		Source:    validation.Body,
+		Source:    validation.JSON,
 	}, &User{}))
 
 	// Define a POST endpoint for testing
 	app.Post("/user", func(c *fiber.Ctx) error {
-		user := c.Locals(validation.Body).(*User)
+		user := c.Locals(validation.JSON).(*User)
 		return c.JSON(user)
 	})
 

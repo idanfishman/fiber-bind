@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.1"
+const Version = "1.2.2"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
@@ -27,7 +27,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 		data := reflect.New(reflect.TypeOf(schema).Elem()).Interface()
 		var err error
 		switch cfg.Source {
-		case Body:
+		case Form, JSON, XML:
 			// Parse request body and store it in the data variable
 			err = c.BodyParser(data)
 		case Query:
@@ -51,7 +51,7 @@ func New(config Config, schema interface{}) fiber.Handler {
 		}
 
 		// Extract form files from the request body and add them to the data variable
-		if cfg.Source == Body && cfg.FormFileFields != nil {
+		if cfg.Source == Form && cfg.FormFileFields != nil {
 			// Get the multipart form from the request body
 			form, err := c.MultipartForm()
 			if err != nil {
@@ -109,18 +109,11 @@ func mapValidationErrors(err error, source string, schema interface{}) fiber.Map
 		fieldName := strings.Split(err.StructNamespace(), ".")[1]
 		// Get the validation tag for the field
 		field, _ := reflect.TypeOf(schema).Elem().FieldByName(fieldName)
-		tag := field.Tag.Get(sourceTags[source])
+		tag := field.Tag.Get(source)
 		// Get the validation error message
 		errorMessage := err.Tag()
 		// Add the error message to the response object
 		errors[tag] = errorMessage
 	}
 	return errors
-}
-
-// sourceTags maps data sources (body, query, and params) to validation tags (json, query, and params)
-var sourceTags = map[string]string{
-	"query":  "query",
-	"body":   "form",
-	"params": "params",
 }
