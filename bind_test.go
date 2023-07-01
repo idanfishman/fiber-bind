@@ -175,7 +175,8 @@ func TestFormDataSuccess(t *testing.T) {
 
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
-	writer.WriteField("title", "A Great Title")
+	err := writer.WriteField("title", "A Great Title")
+	assert.NoError(t, err)
 	writer.Close()
 
 	req := httptest.NewRequest("POST", "/upload", body)
@@ -202,7 +203,8 @@ func TestFormDataFailure(t *testing.T) {
 
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
-	writer.WriteField("title", "")
+	err := writer.WriteField("title", "")
+	assert.NoError(t, err)
 	writer.Close()
 
 	req := httptest.NewRequest("POST", "/upload", body)
