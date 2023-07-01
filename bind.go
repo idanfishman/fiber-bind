@@ -1,4 +1,4 @@
-package validation
+package bind
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const Version = "1.2.2"
+const Version = "1.3.0"
 
 // New creates a new middleware handler
 func New(config Config, schema interface{}) fiber.Handler {
