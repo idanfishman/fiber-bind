@@ -87,9 +87,11 @@ func New(config Config, schema interface{}) fiber.Handler {
 		// Validate the data using the configured validator instance and the provided schema
 		if err := cfg.Validator.Struct(data); err != nil {
 			// Map validation errors to a response object
-			response := mapValidationErrors(err, cfg.Source, schema)
+			// response := mapValidationErrors(err, cfg.Source, schema)
+			fmt.Println(err)
 			// Return a bad request error with the validation errors
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(response)
+			// return c.Status(fiber.StatusUnprocessableEntity).JSON(response)
+			return c.SendStatus(fiber.StatusUnprocessableEntity)
 		}
 
 		// Add the validated data to the context locals
